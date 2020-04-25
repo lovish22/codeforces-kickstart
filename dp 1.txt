@@ -1,0 +1,76 @@
+#include <bits/stdc++.h>
+#define ll long long int
+using namespace std;
+ll dp[1000001];
+ 
+ll rec(ll curr,vector<ll> &po,vector<ll> &ar, vector<ll> &nu){
+    if(curr<=ar[0]){
+        return 0;
+    }
+    if(dp[curr]!=-1){
+        return dp[curr];
+    }
+    if(po[curr]==-1){
+        return dp[curr]=rec(curr-1,po,ar,nu);
+    }
+    ll count;
+    ll index;
+    if(curr-po[curr]<ar[0]){
+        count=nu[curr]-nu[ar[0]];
+        index=ar[0];
+    }    
+    else{
+        count=nu[curr]-nu[curr-po[curr]];
+        index=curr-po[curr]-1;
+        if(po[index+1]==-1){
+            count--;
+        }
+    }    
+    return dp[curr]=(count+rec(index,po,ar,nu));
+}
+ll solve(vector<ll> &po,vector<ll> &ar,ll size,vector<ll> &nu){    
+    ll res=1000000;
+    for(ll i=size-1;i>=0;i--){
+        res=min(res,size-1-i+rec(ar[i],po,ar,nu));
+    }
+    return res;
+    
+}
+ 
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    ll n;
+    cin>>n;
+    vector<ll> ar(n,0);
+    vector<ll> po(1000001,-1);
+    memset(dp,-1,sizeof(dp));
+    for(ll i=0;i<n;i++){
+        ll x,p;
+        cin>>x>>p;
+        ar[i]=x;
+        po[x]=p;    
+    }
+    sort(ar.begin(),ar.end());
+    vector<ll> nu(1000001,0);
+    for(int i=0;i<nu.size();i++){
+        if(i==0){
+            if(po[i]!=-1){
+                nu[i]++;
+            }
+        }
+        else{
+            nu[i]+=nu[i-1];
+            if(po[i]!=-1){
+                nu[i]++;
+            }
+        }      
+    }
+    cout<<solve(po,ar,n,nu);
+    
+    
+    
+    return 0;
+}
+
