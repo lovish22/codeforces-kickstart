@@ -1,0 +1,90 @@
+#include <bits/stdc++.h>
+#define ll long long int
+using namespace std;
+void solve(){
+    vector<char> s;
+    vector<int> fi(5,0);
+    vector <char> co(596,'f');
+    for(int i=1;i<=591;i+=5){
+        cout<<i<<endl;
+        char a;
+        cin>>a;
+        fi[int(a)-65]+=1;
+        cout<<fi[int(a)-65]<<endl;
+        co[i]=a;
+    }
+    for(int i=0;i<5;i++){
+        if(fi[i]==23){
+            cout<<"hi"<<endl;
+            s.push_back(char(i+65));
+            break;
+        }   
+    }
+    vector<int> se(5,0);
+    for(int i=2;i<=592;i+=5){
+        if(co[i-1]==s[0]){
+            cout<<i<<endl;
+            char a;
+            cin>>a;
+            se[int(a)-65]+=1;
+            co[i]=a;
+        }    
+    }
+    for(int i=0;i<5;i++){
+        if(se[i]==5){
+            cout<<"HI"<<endl;
+            s.push_back(char(i+65));
+            break;
+        }
+    }
+    vector<int> th(5,0);
+    for(int i=3;i<=593;i+=5){
+        if(co[i-1]==s[1] && co[i-2]==s[0]){
+            cout<<i<<endl;
+            char a;
+            cin>>a;
+            th[int(a)-65]+=1;
+            co[i]=a;
+        }
+    }
+    for(int i=0;i<5;i++){
+        if(th[i]==1){
+            cout<<"third"<<endl;
+            s.push_back(char(i+65));
+            break;
+        }
+    }
+    char first;
+    char second;
+    for(int i=4;i<=594;i+=5){
+        if(co[i-1]==s[2] && co[i-2]==s[1] && co[i-3]==s[0]){
+            cout<<i<<endl;
+            char second;
+            cin>>second;
+            cout<<i+1<<endl;
+            char first;
+            cin>>first;
+            cout<<first<<" "<<second<<endl;
+        }
+    }
+    s.push_back(first);
+    s.push_back(second);
+    for(auto it=s.begin();it!=s.end();it++){
+        cout<<*it;
+    }
+    cout<<endl;
+    char res;
+    cin>>res;
+    return;
+}
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    int t,f;
+    cin>>t>>f;
+    while(t--){
+        solve();
+    }
+    return 0;
+}
