@@ -1,0 +1,131 @@
+#include <bits/stdc++.h>
+#define ll long long int
+using namespace std;
+struct node{
+    ll start;
+    ll end;
+    ll val;
+    node* left;
+    node* right;
+};
+node* init(ll start,ll end,ll val){
+    node* temp=new node();
+    temp->start=start;
+    temp->end=end;
+    temp->val=val;
+    temp->left=NULL;
+    temp->right=NULL;
+    return temp;
+}
+node* construct(ll start,ll end,vector<ll> &arr, node*root){
+    if(start<=end){
+        ll value=arr[end]-arr[start-1];
+        node* a=init(start,end,value);
+        root=a;
+        ll mid=(start+end-1)/2;
+        if(start==end){
+            return root;
+        }
+        root->left=construct(start,mid,arr,root->left);
+        root->right=construct(mid+1,end,arr,root->right);
+    }
+    return root;
+    
+}
+ll get_sum(ll l, ll r,node* root){
+    if(root==NULL){
+        return 0;
+    }
+    else if(l<=(root->start) && r>=(root->end)){
+        return root->val;
+    }
+    else if(r<(root->start)||l>(root->end)){
+        return 0;
+    }
+    else{
+        return (get_sum(l,r,root->left)+get_sum(l,r,root->right));
+    }
+}
+
+ll query(ll l, ll r,node* root1, node* root2){
+    ll ans1=get_sum(l,r,root1);
+    ll ans2=get_sum(l,r,root2);
+    ll ans=ans1-(l-1)*ans2;
+    if(l%2==0){
+        ans*=-1;
+    }
+    return ans;
+}
+
+void update(node* root,ll prev,ll upd,ll index){
+    if(root==NULL){
+        return;
+    }
+    if(index<(root->start)||index>(root->end)){
+        return;
+    }
+    root->val+=(upd-prev);
+    update(root->left,prev,upd,index);
+    update(root->right,prev,upd,index);
+}
+void updUtil(node* root,ll index,ll upd){
+    if(root==NULL){
+        return;
+    }
+    ll previous=get_sum(index,index,root);
+    update(root,previous,upd,index);
+}
+
+
+int main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    ll t;
+    cin>>t;
+    ll tt=t;
+    while(t--){
+        ll n,q;
+        cin>>n>>q;
+        vector<ll> v(n);
+        vector<ll> arr1(n+1);
+        vector<ll> arr2(n+1);
+        arr1[0]=0;
+        arr2[0]=0;
+        for(ll i=0;i<n;i++){
+            cin>>v[i];
+            if(i%2==0){
+                arr1[i+1]=arr1[i]+(i+1)*v[i];
+                arr2[i+1]=arr2[i]+v[i];
+            }
+            else{
+                arr1[i+1]=arr1[i]-(i+1)*v[i];
+                arr2[i+1]=arr2[i]-v[i];
+            }
+        }
+        node* root1=construct(1,n,arr1,root1);
+        node* root2=construct(1,n,arr2,root2);
+        ll res=0;
+        while(q--){
+            char op;
+            cin>>op;
+            if(op=='Q'){
+                ll x1,x2;
+                cin>>x1>>x2;
+                res+=query(x1,x2,root1,root2); 
+            }
+            else{
+                ll x1,x2;
+                cin>>x1>>x2;
+                if(x1%2==0){
+                    x2*=-1;
+                }
+                updUtil(root1,x1,x1*x2);
+                updUtil(root2,x1,x2);
+            }
+        }
+        cout<<"Case #"<<tt-t<<": "<<res<<'\n';
+    }
+    
+    return 0;
+}
